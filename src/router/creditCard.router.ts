@@ -3,7 +3,7 @@
  */
 
 import express, { Request, Response } from "express";
-import { getDatabase } from '../../modules/notion';
+import { getDatabase, createEntry } from '../../modules/notion';
 
 
 /**
@@ -42,6 +42,17 @@ ccAccountsRouter.get("/sum", async (req: Request, res: Response) => {
         const usd = accounts.filter(x => x.moneda === "USD").reduce((partialSum, a) => partialSum + a.monto, 0);
 
         res.status(200).send({ ars, usd });
+    } catch (e: any) {
+        res.status(404).send(e.message);
+    }
+});
+
+ccAccountsRouter.post("/", async (req: Request, res: Response) => {
+    try {
+        const entry = req.body;
+        const response = await createEntry(entry);
+
+        res.status(200).send(response);
     } catch (e: any) {
         res.status(404).send(e.message);
     }

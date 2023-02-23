@@ -7,6 +7,7 @@ import { ENV_CONFIG } from '../config';
 import { useExpressServer, useContainer as routingContainer } from 'routing-controllers';
 import * as http from 'http';
 import { ccAccountsRouter } from "./router/creditCard.router";
+import cors from 'cors';
 
 
 const baseDir = __dirname;
@@ -25,8 +26,8 @@ useExpressServer(expressApp, {
 expressApp.use(bodyParser.urlencoded({ extended: false }));
 expressApp.use(bodyParser.json());
 
+expressApp.use(cors());
 expressApp.use("/creditCards", ccAccountsRouter);
-
 
 const server = http.createServer(expressApp);
 server.listen(ENV_CONFIG.app.port, () => {
