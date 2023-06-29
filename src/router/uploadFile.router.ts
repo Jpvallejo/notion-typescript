@@ -57,26 +57,6 @@ uploadFileRouter.post("/alquiler", upload.single("file"), async (req: Request, r
         const year = req.query.year;
         const month = req.query.month;
         const file = req.file && req.file.buffer;
-        let folder = await googleDriveService.searchFolder('Expensas').catch((error) => {
-            console.error(error);
-            throw error;
-        });
-        await googleDriveService.saveFile(`Expensas-${month}-${year}`, file, 'application/pdf', folder?.id).catch((error: any) => {
-            console.error(error);
-        });
-
-        res.status(200).send('File uploaded successfully!');
-
-    } catch (e: any) {
-        res.status(404).send(e.message);
-    }
-});
-
-uploadFileRouter.post("/alquiler", upload.single("file"), async (req: Request, res: Response) => {
-    try {
-        const year = req.query.year;
-        const month = req.query.month;
-        const file = req.file && req.file.buffer;
         let folder = await googleDriveService.searchFolder('Alquiler').catch((error) => {
             console.error(error);
             throw error;
