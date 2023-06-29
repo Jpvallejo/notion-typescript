@@ -36,7 +36,10 @@ uploadFileRouter.post("/expensas", upload.single("file"), async (req: Request, r
     try {
         const year = req.query.year;
         const month = req.query.month;
-        const file = req.file && req.file.buffer;
+        const file = req.file && Readable.from(req.file.buffer);
+        if (!file) {
+            throw new Error("The file is not correct")
+        }
         let folder = await googleDriveService.searchFolder('Expensas').catch((error) => {
             console.error(error);
             throw error;
@@ -56,7 +59,10 @@ uploadFileRouter.post("/alquiler", upload.single("file"), async (req: Request, r
     try {
         const year = req.query.year;
         const month = req.query.month;
-        const file = req.file && req.file.buffer;
+        const file = req.file && Readable.from(req.file.buffer);
+        if (!file) {
+            throw new Error("The file is not correct")
+        }
         let folder = await googleDriveService.searchFolder('Alquiler').catch((error) => {
             console.error(error);
             throw error;
@@ -76,7 +82,10 @@ uploadFileRouter.post("/cochera", upload.single("file"), async (req: Request, re
     try {
         const year = req.query.year;
         const month = req.query.month;
-        const file = req.file && req.file.buffer;
+        const file = req.file && Readable.from(req.file.buffer);
+        if (!file) {
+            throw new Error("The file is not correct")
+        }
         let folder = await googleDriveService.searchFolder('Cochera').catch((error) => {
             console.error(error);
             throw error;
@@ -96,7 +105,10 @@ uploadFileRouter.post("/metrogas", upload.single("file"), async (req: Request, r
     try {
         const year = req.query.year;
         const month = req.query.month;
-        const file = req.file && req.file.buffer;
+        const file = req.file && Readable.from(req.file.buffer);
+        if (!file) {
+            throw new Error("The file is not correct")
+        }
         let folder = await googleDriveService.searchFolder('Metrogas').catch((error) => {
             console.error(error);
             throw error;
@@ -116,12 +128,38 @@ uploadFileRouter.post("/edenor", upload.single("file"), async (req: Request, res
     try {
         const year = req.query.year;
         const month = req.query.month;
-        const file = req.file && req.file.buffer;
+        const file = req.file && Readable.from(req.file.buffer);
+        if (!file) {
+            throw new Error("The file is not correct")
+        }
         let folder = await googleDriveService.searchFolder('Edenor').catch((error) => {
             console.error(error);
             throw error;
         });
         await googleDriveService.saveFile(`Edenor-${month}-${year}`, file, 'application/pdf', folder?.id).catch((error: any) => {
+            console.error(error);
+        });
+
+        res.status(200).send('File uploaded successfully!');
+
+    } catch (e: any) {
+        res.status(404).send(e.message);
+    }
+});
+
+uploadFileRouter.post("/agip", upload.single("file"), async (req: Request, res: Response) => {
+    try {
+        const year = req.query.year;
+        const month = req.query.month;
+        const file = req.file && Readable.from(req.file.buffer);
+        if (!file) {
+            throw new Error("The file is not correct")
+        }
+        let folder = await googleDriveService.searchFolder('Agip').catch((error) => {
+            console.error(error);
+            throw error;
+        });
+        await googleDriveService.saveFile(`Agip-${month}-${year}`, file, 'application/pdf', folder?.id).catch((error: any) => {
             console.error(error);
         });
 

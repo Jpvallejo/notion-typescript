@@ -1,4 +1,5 @@
 import fs from 'fs';
+import { Readable } from 'stream';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { google } = require('googleapis');
 
@@ -65,7 +66,7 @@ export class GoogleDriveService {
     });
   }
 
-  saveFile(fileName: string, fileBuffer: Buffer | undefined, fileMimeType: string, folderId?: string) {
+  saveFile(fileName: string, fileBuffer: Readable | undefined, fileMimeType: string, folderId?: string) {
     return this.driveClient.files.create({
       requestBody: {
         name: fileName,

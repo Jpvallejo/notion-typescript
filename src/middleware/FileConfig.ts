@@ -4,10 +4,7 @@ import os from 'os';
 
 
 
-const upload = multer({
-    storage: multer.memoryStorage(),
-    limits: { fileSize: 1000000000, files: 2 },
-  });
+const upload = multer();
 
 
 export default upload;
