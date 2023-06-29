@@ -8,6 +8,7 @@ import { useExpressServer, useContainer as routingContainer } from 'routing-cont
 import * as http from 'http';
 import { ccAccountsRouter } from "./router/creditCard.router";
 import cors from 'cors';
+import { uploadFileRouter } from './router/uploadFile.router';
 
 
 const baseDir = __dirname;
@@ -28,6 +29,7 @@ expressApp.use(bodyParser.json());
 
 expressApp.use(cors());
 expressApp.use("/creditCards", ccAccountsRouter);
+expressApp.use("/upload", uploadFileRouter);
 
 const server = http.createServer(expressApp);
 server.listen(ENV_CONFIG.app.port, () => {
