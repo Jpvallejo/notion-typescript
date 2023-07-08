@@ -9,6 +9,7 @@ import * as http from 'http';
 import { ccAccountsRouter } from "./router/creditCard.router";
 import cors from 'cors';
 import { uploadFileRouter } from './router/uploadFile.router';
+import { captcha } from './router/captcha.router';
 
 
 const baseDir = __dirname;
@@ -24,11 +25,11 @@ useExpressServer(expressApp, {
   controllers: [baseDir + `/**/controllers/*{.js,.ts}`]
 });
 
-expressApp.use(bodyParser.urlencoded({ extended: false }));
-expressApp.use(bodyParser.json());
+expressApp.use(express.json({ limit: '200mb' }));
 
 expressApp.use(cors());
 expressApp.use("/creditCards", ccAccountsRouter);
+expressApp.use("/captcha", captcha);
 expressApp.use("/upload", uploadFileRouter);
 
 const server = http.createServer(expressApp);
