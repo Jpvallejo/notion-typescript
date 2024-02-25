@@ -3,7 +3,7 @@
  */
 
 import express, { Request, Response } from "express";
-import { getDatabase, createEntry } from '../../modules/notion';
+import { getDatabase, createEntry, getAllRecords } from '../../modules/notion';
 
 
 /**
@@ -38,10 +38,44 @@ ccAccountsRouter.get("/sum", async (req: Request, res: Response) => {
         const creditCard = req.query.card;
         const month = req.query.month;
         const accounts = await getDatabase(creditCard as string, month as string);
-        const ars = accounts.filter(x => x.moneda === "ARS").reduce((partialSum, a) => partialSum + a.monto, 0);
-        const usd = accounts.filter(x => x.moneda === "USD").reduce((partialSum, a) => partialSum + a.monto, 0);
+        const ars = accounts.filter((x: { moneda: string; }) => x.moneda === "ARS").reduce((partialSum: any, a: { monto: any; }) => partialSum + a.monto, 0);
+        const usd = accounts.filter((x: { moneda: string; }) => x.moneda === "USD").reduce((partialSum: any, a: { monto: any; }) => partialSum + a.monto, 0);
 
         res.status(200).send({ ars, usd });
+    } catch (e: any) {
+        res.status(404).send(e.message);
+    }
+});
+
+ccAccountsRouter.get("/category", async (req: Request, res: Response) => {
+    try {
+        const month = req.query.month;
+        const dolar = parseFloat(req.query.dolar as string);
+        const accounts = await getAllRecords(month as string);
+
+        const map = new Map<string, number>();
+        let sum = 0;
+        accounts.map((x) => {
+            const newAmount = x.moneda === "USD"? parseFloat(x.monto)* dolar : parseFloat(x.monto)
+            const amount = map.get(x.categoria);
+            sum += newAmount
+            if (!amount) {
+                map.set(x.categoria, newAmount);
+            } else {
+                map.set(x.categoria, amount + newAmount)
+            }
+        })
+        console.log(map)
+        console.log(sum);
+
+        const percMap: any[] = [];
+        map.forEach((value,key) => {
+            var obj: any = {};
+            obj[key] = (value/sum * 100)
+            percMap.push(obj);
+        })
+        console.log(percMap);
+        res.status(200).send({categories: percMap});
     } catch (e: any) {
         res.status(404).send(e.message);
     }

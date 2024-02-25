@@ -8,6 +8,7 @@ type Record = {
     moneda: string;
     mes: string[];
     tarjeta: string;
+    categoria: string;
 }
 
 dotenv.config();
@@ -74,6 +75,11 @@ export async function createEntry(entry: Record) {
                 name: entry.tarjeta
             }
         },
+        Categoria: {
+            select: {
+                name: entry.categoria
+            }
+        },
     }
     const response = await notion.pages.create({
         parent: {
@@ -83,5 +89,33 @@ export async function createEntry(entry: Record) {
     });
 
     return response;
+};
+
+export async function
+    getAllRecords(month: string) {
+    const response = await notion.databases.query({
+        database_id: databaseId ?? "",
+        filter: {
+            and: [
+                {
+                    property: "Mes",
+                    multi_select: {
+                        contains: month
+                    }
+                }
+            ]
+        }
+    });
+    return response.results.map((page:any) => {
+        const casted = page as any;
+        return {
+            id: casted.id as string,
+            concepto: casted.properties.Concepto.title[0]?.plain_text as string,
+            categoria: casted.properties.Categoria.select?.name as string,
+            monto: casted.properties.Monto.number as string,
+            moneda: casted.properties.Moneda.select.name as string
+
+        }
+    })
 };
 
