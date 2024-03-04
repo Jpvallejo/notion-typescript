@@ -65,16 +65,12 @@ ccAccountsRouter.get("/category", async (req: Request, res: Response) => {
                 map.set(x.categoria, amount + newAmount)
             }
         })
-        console.log(map)
-        console.log(sum);
-
         const percMap: any[] = [];
         map.forEach((value,key) => {
             var obj: any = {};
-            obj[key] = (value/sum * 100)
+            obj[key] = value
             percMap.push(obj);
         })
-        console.log(percMap);
         res.status(200).send({categories: percMap});
     } catch (e: any) {
         res.status(404).send(e.message);
